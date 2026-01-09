@@ -92,12 +92,17 @@
                 <div class="bg-indigo-500 p-2 rounded-lg text-white"><i class="ph ph-chalkboard-teacher text-2xl"></i></div>
                 <div>
                     <h1 class="text-xl font-bold leading-none tracking-tight">Bingo Gramatical</h1>
-                    <span class="text-xs text-slate-400">Edición Voz</span>
+                    <span class="text-xs text-slate-400">Edición Pro</span>
                 </div>
             </div>
-            <button onclick="location.reload()" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-sm transition border border-slate-700">
-                <i class="ph ph-arrow-counter-clockwise"></i> Reiniciar
-            </button>
+            <div class="flex gap-2">
+                <button onclick="toggleFullScreen()" class="bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg text-sm transition border border-slate-700 text-slate-300 hover:text-white" title="Pantalla Completa">
+                    <i id="fullscreen-icon" class="ph ph-corners-out text-xl"></i>
+                </button>
+                <button onclick="location.reload()" class="bg-slate-800 hover:bg-slate-700 px-4 py-2 rounded-lg text-sm transition border border-slate-700 flex items-center gap-2">
+                    <i class="ph ph-arrow-counter-clockwise"></i> <span class="hidden sm:inline">Reiniciar</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -242,10 +247,12 @@
                 </div>
 
                 <!-- ZONA LATERAL (HISTORIAL) -->
-                <div class="lg:col-span-4 bg-white rounded-2xl shadow-lg border border-slate-200 flex flex-col overflow-hidden max-h-[600px]">
+                <div class="lg:col-span-4 bg-white rounded-2xl shadow-lg border border-slate-200 flex flex-col overflow-hidden max-h-[600px] relative">
                     <div class="bg-slate-100 p-4 font-bold text-slate-700 flex items-center justify-between border-b border-slate-200">
                         <span class="flex items-center gap-2"><i class="ph ph-clock-counter-clockwise"></i> Historial</span>
-                        <span class="text-xs bg-white px-2 py-1 rounded border border-slate-200 text-slate-400 font-mono">LOG</span>
+                        <button onclick="verifyBingoModal()" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs px-3 py-1 rounded shadow transition">
+                            <i class="ph ph-check-circle"></i> Verificar
+                        </button>
                     </div>
                     <ul id="history-list" class="flex-1 overflow-y-auto p-2 space-y-2 bg-slate-50">
                         <!-- Items -->
@@ -260,11 +267,9 @@
             <div class="flex items-center justify-between mb-6 px-2">
                 <div>
                     <h2 class="font-bold text-slate-800 text-lg">Tu Cartón</h2>
-                    <p class="text-xs text-slate-500">Escucha al profesor y marca.</p>
+                    <p class="text-xs text-slate-500">Marca las 12 casillas para ganar.</p>
                 </div>
-                <button onclick="checkBingo()" class="bg-emerald-500 hover:bg-emerald-600 text-white px-5 py-2 rounded-full font-bold shadow-lg shadow-emerald-200 transform hover:-translate-y-1 transition flex items-center gap-2">
-                    <i class="ph ph-hand-waving"></i> ¡BINGO!
-                </button>
+                <!-- El botón manual se ha eliminado por petición. La celebración es automática. -->
             </div>
 
             <!-- CARTÓN -->
@@ -280,8 +285,8 @@
                 </div>
                 
                 <div class="bg-slate-100 p-2 flex justify-between items-center text-[10px] text-slate-400 font-mono uppercase border-t border-slate-200">
-                    <span>ID: <span id="card-id">--</span></span>
-                    <span onclick="generateStudentCard()" class="cursor-pointer hover:text-indigo-500 underline decoration-dotted">Cambiar Cartón</span>
+                    <span>ID CARTÓN: <span id="card-id" class="font-bold text-slate-600 text-lg">--</span></span>
+                    <span class="text-xs opacity-50">v3.0</span>
                 </div>
             </div>
 
@@ -295,12 +300,11 @@
     <!-- LOGICA -->
     <script>
         // ============================================
-        // 1. GENERACIÓN DE DATOS ESTRUCTURADOS (AMPLIADO)
+        // 1. GENERACIÓN DE DATOS (DATASET +150 verbos)
         // ============================================
-        
-        // Estructura Raw: [Verbo, Conjugación, Persona, Número, Tiempo, Modo, Tipo]
         const rawData = [
-            // --- INDICATIVO SIMPLE (Más variedad de personas y verbos) ---
+            // [Verbo, Conjugación, Persona, Número, Tiempo, Modo, Tipo]
+            // INDICATIVO SIMPLE
             ["Comer", "Yo como", "1ª", "Singular", "Presente", "Indicativo", "simple"],
             ["Vivir", "Tú vives", "2ª", "Singular", "Presente", "Indicativo", "simple"],
             ["Cantar", "Ella canta", "3ª", "Singular", "Presente", "Indicativo", "simple"],
@@ -311,7 +315,6 @@
             ["Leer", "Yo leo", "1ª", "Singular", "Presente", "Indicativo", "simple"],
             ["Abrir", "Tú abres", "2ª", "Singular", "Presente", "Indicativo", "simple"],
             ["Comprender", "Nosotros comprendemos", "1ª", "Plural", "Presente", "Indicativo", "simple"],
-            
             ["Saltar", "Yo salté", "1ª", "Singular", "Pret. Perf. Simple", "Indicativo", "simple"],
             ["Comer", "Tú comiste", "2ª", "Singular", "Pret. Perf. Simple", "Indicativo", "simple"],
             ["Salir", "Él salió", "3ª", "Singular", "Pret. Perf. Simple", "Indicativo", "simple"],
@@ -322,7 +325,6 @@
             ["Traer", "Tú trajiste", "2ª", "Singular", "Pret. Perf. Simple", "Indicativo", "simple"],
             ["Conducir", "Ella condujo", "3ª", "Singular", "Pret. Perf. Simple", "Indicativo", "simple"],
             ["Poder", "Nosotros pudimos", "1ª", "Plural", "Pret. Perf. Simple", "Indicativo", "simple"],
-
             ["Estar", "Yo estaba", "1ª", "Singular", "Pret. Imperfecto", "Indicativo", "simple"],
             ["Tener", "Tú tenías", "2ª", "Singular", "Pret. Imperfecto", "Indicativo", "simple"],
             ["Hacer", "Ella hacía", "3ª", "Singular", "Pret. Imperfecto", "Indicativo", "simple"],
@@ -333,7 +335,6 @@
             ["Ver", "Tú veías", "2ª", "Singular", "Pret. Imperfecto", "Indicativo", "simple"],
             ["Ir", "Él iba", "3ª", "Singular", "Pret. Imperfecto", "Indicativo", "simple"],
             ["Ser", "Nosotros éramos", "1ª", "Plural", "Pret. Imperfecto", "Indicativo", "simple"],
-
             ["Amar", "Yo amaré", "1ª", "Singular", "Futuro Simple", "Indicativo", "simple"],
             ["Saber", "Tú sabrás", "2ª", "Singular", "Futuro Simple", "Indicativo", "simple"],
             ["Poner", "Él pondrá", "3ª", "Singular", "Futuro Simple", "Indicativo", "simple"],
@@ -344,7 +345,6 @@
             ["Salir", "Yo saldré", "1ª", "Singular", "Futuro Simple", "Indicativo", "simple"],
             ["Decir", "Tú dirás", "2ª", "Singular", "Futuro Simple", "Indicativo", "simple"],
             ["Querer", "Nosotros querremos", "1ª", "Plural", "Futuro Simple", "Indicativo", "simple"],
-
             ["Ser", "Yo sería", "1ª", "Singular", "Condicional Simple", "Indicativo", "simple"],
             ["Ir", "Tú irías", "2ª", "Singular", "Condicional Simple", "Indicativo", "simple"],
             ["Ver", "Él vería", "3ª", "Singular", "Condicional Simple", "Indicativo", "simple"],
@@ -355,8 +355,7 @@
             ["Haber", "Habría", "3ª", "Singular", "Condicional Simple", "Indicativo", "simple"],
             ["Poner", "Tú pondrías", "2ª", "Singular", "Condicional Simple", "Indicativo", "simple"],
             ["Tener", "Nosotros tendríamos", "1ª", "Plural", "Condicional Simple", "Indicativo", "simple"],
-
-            // --- INDICATIVO COMPUESTO (Más variedad) ---
+            // INDICATIVO COMPUESTO
             ["Hablar", "Yo he hablado", "1ª", "Singular", "Pret. Perf. Compuesto", "Indicativo", "compound"],
             ["Estudiar", "Tú has estudiado", "2ª", "Singular", "Pret. Perf. Compuesto", "Indicativo", "compound"],
             ["Abrir", "Él ha abierto", "3ª", "Singular", "Pret. Perf. Compuesto", "Indicativo", "compound"],
@@ -367,7 +366,6 @@
             ["Volver", "Ella ha vuelto", "3ª", "Singular", "Pret. Perf. Compuesto", "Indicativo", "compound"],
             ["Decir", "Nosotros hemos dicho", "1ª", "Plural", "Pret. Perf. Compuesto", "Indicativo", "compound"],
             ["Hacer", "Vosotros habéis hecho", "2ª", "Plural", "Pret. Perf. Compuesto", "Indicativo", "compound"],
-            
             ["Vivir", "Yo había vivido", "1ª", "Singular", "Pret. Pluscuamperf.", "Indicativo", "compound"],
             ["Llegar", "Tú habías llegado", "2ª", "Singular", "Pret. Pluscuamperf.", "Indicativo", "compound"],
             ["Salir", "Él había salido", "3ª", "Singular", "Pret. Pluscuamperf.", "Indicativo", "compound"],
@@ -376,7 +374,6 @@
             ["Descubrir", "Yo había descubierto", "1ª", "Singular", "Pret. Pluscuamperf.", "Indicativo", "compound"],
             ["Morir", "Tú habías muerto", "2ª", "Singular", "Pret. Pluscuamperf.", "Indicativo", "compound"],
             ["Resolver", "Ella había resuelto", "3ª", "Singular", "Pret. Pluscuamperf.", "Indicativo", "compound"],
-            
             ["Ganar", "Yo habré ganado", "1ª", "Singular", "Futuro Compuesto", "Indicativo", "compound"],
             ["Perder", "Tú habrás perdido", "2ª", "Singular", "Futuro Compuesto", "Indicativo", "compound"],
             ["Elegir", "Él habrá elegido", "3ª", "Singular", "Futuro Compuesto", "Indicativo", "compound"],
@@ -384,7 +381,6 @@
             ["Dormir", "Ellos habrán dormido", "3ª", "Plural", "Futuro Compuesto", "Indicativo", "compound"],
             ["Terminar", "Yo habré terminado", "1ª", "Singular", "Futuro Compuesto", "Indicativo", "compound"],
             ["Volver", "Tú habrás vuelto", "2ª", "Singular", "Futuro Compuesto", "Indicativo", "compound"],
-            
             ["Estar", "Yo habría estado", "1ª", "Singular", "Condic. Compuesto", "Indicativo", "compound"],
             ["Ser", "Tú habrías sido", "2ª", "Singular", "Condic. Compuesto", "Indicativo", "compound"],
             ["Ir", "Él habría ido", "3ª", "Singular", "Condic. Compuesto", "Indicativo", "compound"],
@@ -392,8 +388,7 @@
             ["Hacer", "Ellos habrían hecho", "3ª", "Plural", "Condic. Compuesto", "Indicativo", "compound"],
             ["Romper", "Yo habría roto", "1ª", "Singular", "Condic. Compuesto", "Indicativo", "compound"],
             ["Abrir", "Tú habrías abierto", "2ª", "Singular", "Condic. Compuesto", "Indicativo", "compound"],
-
-            // --- SUBJUNTIVO SIMPLE (Más verbos irregulares) ---
+            // SUBJUNTIVO SIMPLE
             ["Cantar", "Yo cante", "1ª", "Singular", "Presente", "Subjuntivo", "simple"],
             ["Beber", "Tú bebas", "2ª", "Singular", "Presente", "Subjuntivo", "simple"],
             ["Vivir", "Él viva", "3ª", "Singular", "Presente", "Subjuntivo", "simple"],
@@ -406,7 +401,6 @@
             ["Saber", "Nosotros sepamos", "1ª", "Plural", "Presente", "Subjuntivo", "simple"],
             ["Ir", "Vosotros vayáis", "2ª", "Plural", "Presente", "Subjuntivo", "simple"],
             ["Dar", "Ellas den", "3ª", "Plural", "Presente", "Subjuntivo", "simple"],
-
             ["Hablar", "Yo hablara", "1ª", "Singular", "Pret. Imperfecto", "Subjuntivo", "simple"],
             ["Comer", "Tú comieras", "2ª", "Singular", "Pret. Imperfecto", "Subjuntivo", "simple"],
             ["Saber", "Él supiera", "3ª", "Singular", "Pret. Imperfecto", "Subjuntivo", "simple"],
@@ -417,7 +411,6 @@
             ["Querer", "Tú quisieras", "2ª", "Singular", "Pret. Imperfecto", "Subjuntivo", "simple"],
             ["Tener", "Ella tuviera", "3ª", "Singular", "Pret. Imperfecto", "Subjuntivo", "simple"],
             ["Venir", "Nosotros viniéramos", "1ª", "Plural", "Pret. Imperfecto", "Subjuntivo", "simple"],
-
             ["Estar", "Yo estuviese", "1ª", "Singular", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
             ["Ser", "Tú fueses", "2ª", "Singular", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
             ["Dar", "Él diese", "3ª", "Singular", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
@@ -427,8 +420,7 @@
             ["Pedir", "Yo pidiese", "1ª", "Singular", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
             ["Sentir", "Tú sintieses", "2ª", "Singular", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
             ["Dormir", "Ella durmiese", "3ª", "Singular", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
-
-            // --- SUBJUNTIVO COMPUESTO ---
+            // SUBJUNTIVO COMPUESTO
             ["Acabar", "Yo haya acabado", "1ª", "Singular", "Pret. Perf. Compuesto", "Subjuntivo", "compound"],
             ["Empezar", "Tú hayas empezado", "2ª", "Singular", "Pret. Perf. Compuesto", "Subjuntivo", "compound"],
             ["Volver", "Él haya vuelto", "3ª", "Singular", "Pret. Perf. Compuesto", "Subjuntivo", "compound"],
@@ -436,7 +428,6 @@
             ["Abrir", "Ellos hayan abierto", "3ª", "Plural", "Pret. Perf. Compuesto", "Subjuntivo", "compound"],
             ["Romper", "Yo haya roto", "1ª", "Singular", "Pret. Perf. Compuesto", "Subjuntivo", "compound"],
             ["Escribir", "Tú hayas escrito", "2ª", "Singular", "Pret. Perf. Compuesto", "Subjuntivo", "compound"],
-
             ["Llamar", "Yo hubiera llamado", "1ª", "Singular", "Pret. Pluscuamperf.", "Subjuntivo", "compound"],
             ["Sentir", "Tú hubieras sentido", "2ª", "Singular", "Pret. Pluscuamperf.", "Subjuntivo", "compound"],
             ["Pedir", "Él hubiera pedido", "3ª", "Singular", "Pret. Pluscuamperf.", "Subjuntivo", "compound"],
@@ -457,52 +448,84 @@
             type: d[6]
         }));
 
-        // ============================================
-        // 2. ESTADO
-        // ============================================
         let gameState = {
             role: null,
             mode: 'analyst',
-            level: 1, // Default Level
+            level: 1, 
             filtered: [],
             available: [],
             currentVerb: null,
             voiceEnabled: true,
-            currentSpeechText: ""
+            currentSpeechText: "",
+            wakeLock: null,
+            drawnHistory: [] // IDs de verbos que han salido
         };
 
         const synth = window.speechSynthesis;
-
-        // Init Default Level
         window.onload = () => setLevel(1);
 
-        // ============================================
-        // 3. FUNCIONES DE JUEGO
-        // ============================================
+        // --- SEEDED RANDOM (VERIFICACIÓN) ---
+        // Generador aleatorio basado en semilla para reconstruir cartones
+        function mulberry32(a) {
+            return function() {
+              var t = a += 0x6D2B79F5;
+              t = Math.imul(t ^ t >>> 15, t | 1);
+              t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+              return ((t ^ t >>> 14) >>> 0) / 4294967296;
+            }
+        }
+
+        // Shuffle array using seed
+        function shuffleWithSeed(array, seed) {
+            const rng = mulberry32(seed);
+            const m = array.length;
+            const t = array.slice(); // Copy
+            
+            // Fisher-Yates shuffle with seeded RNG
+            for (let i = m - 1; i > 0; i--) {
+                const j = Math.floor(rng() * (i + 1));
+                const temp = t[i];
+                t[i] = t[j];
+                t[j] = temp;
+            }
+            return t;
+        }
+
+        // --- WAKE LOCK & FULLSCREEN ---
+        async function requestWakeLock() {
+            try {
+                if ('wakeLock' in navigator) {
+                    gameState.wakeLock = await navigator.wakeLock.request('screen');
+                    gameState.wakeLock.addEventListener('release', () => gameState.wakeLock = null);
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        function toggleFullScreen() {
+            const icon = document.getElementById('fullscreen-icon');
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+                icon.classList.replace('ph-corners-out', 'ph-corners-in');
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                    icon.classList.replace('ph-corners-in', 'ph-corners-out');
+                }
+            }
+        }
 
         function setLevel(level) {
             gameState.level = level;
-            
-            // Visual Updates
             document.querySelectorAll('.btn-level').forEach(b => b.classList.remove('active'));
             document.getElementById(`btn-lvl-${level}`).classList.add('active');
         }
 
         function startGame(role) {
             const level = gameState.level;
-
-            // Logic without checkboxes
             const filtered = verbDatabase.filter(v => {
-                if (level === 1) {
-                    // Level 1: Indicative + Simple
-                    return v.mood === 'Indicativo' && v.type === 'simple';
-                } else if (level === 2) {
-                    // Level 2: Indicative (All)
-                    return v.mood === 'Indicativo';
-                } else {
-                    // Level 3: All (Indicative + Subjunctive)
-                    return true; 
-                }
+                if (level === 1) return v.mood === 'Indicativo' && v.type === 'simple';
+                else if (level === 2) return v.mood === 'Indicativo';
+                else return true; 
             });
 
             if (filtered.length < 12) {
@@ -514,9 +537,11 @@
             gameState.available = [...filtered];
             gameState.role = role;
             gameState.mode = document.querySelector('input[name="gameMode"]:checked').value;
+            gameState.drawnHistory = [];
 
             document.getElementById('config-screen').classList.add('hidden');
-            
+            requestWakeLock();
+
             if (role === 'teacher') {
                 document.getElementById('teacher-screen').classList.remove('hidden');
                 updateRemaining();
@@ -526,7 +551,7 @@
             }
         }
 
-        // --- PROFESOR (BOMBO) ---
+        // --- PROFESOR ---
         function updateRemaining() {
             document.getElementById('remaining-count').innerText = gameState.available.length;
         }
@@ -564,25 +589,22 @@
                 return;
             }
 
-            // Reset UI
             document.getElementById('spoiler-answer').classList.add('opacity-0');
             document.getElementById('eye-icon').className = "ph ph-eye-slash text-2xl";
             document.getElementById('repeat-btn').disabled = false;
 
-            // Lógica Bola
             const idx = Math.floor(Math.random() * gameState.available.length);
             const verb = gameState.available[idx];
             gameState.available.splice(idx, 1);
             gameState.currentVerb = verb;
+            gameState.drawnHistory.push(verb.id);
             updateRemaining();
 
-            // Renderizar Visual
             const display = document.getElementById('ball-display');
             const answerEl = document.getElementById('spoiler-answer');
             display.innerHTML = '';
 
             if (gameState.mode === 'analyst') {
-                // Visual
                 display.innerHTML = `
                     <div class="animate-pop flex flex-col items-center gap-4">
                         <div class="text-xs text-slate-400 font-mono uppercase tracking-widest mb-2">Descripción Gramatical</div>
@@ -599,23 +621,12 @@
                     </div>
                 `;
                 answerEl.innerText = verb.conjugation;
-
-                // Preparar Audio (Texto natural)
-                // Convertir "1ª" -> "Primera", "3ª" -> "Tercera"
-                const personFull = verb.person.replace("1ª", "Primera").replace("2ª", "Segunda").replace("3ª", "Tercera");
                 
-                // Expandir abreviaturas para la voz
-                let tenseFull = verb.tense
-                    .replace("Pret.", "Pretérito")
-                    .replace("Perf.", "Perfecto")
-                    .replace("Pluscuamperf.", "Pluscuamperfecto")
-                    .replace("Condic.", "Condicional")
-                    .replace("(B)", "");
-
+                const personFull = verb.person.replace("1ª", "Primera").replace("2ª", "Segunda").replace("3ª", "Tercera");
+                let tenseFull = verb.tense.replace("Pret.", "Pretérito").replace("Perf.", "Perfecto").replace("Pluscuamperf.", "Pluscuamperfecto").replace("Condic.", "Condicional").replace("(B)", "");
                 gameState.currentSpeechText = `${personFull} Persona del ${verb.number}. ${tenseFull} de ${verb.mood}.`;
 
             } else {
-                // Visual
                 display.innerHTML = `
                     <div class="animate-pop flex flex-col items-center">
                         <div class="text-xs text-slate-400 font-mono uppercase tracking-widest mb-4">Verbo Conjugado</div>
@@ -624,53 +635,29 @@
                     </div>
                 `;
                 answerEl.innerText = `${verb.person} ${verb.number} ${verb.tense}`;
-                
-                // Audio
                 gameState.currentSpeechText = verb.conjugation;
             }
 
             addToHistory(verb);
-
-            // Hablar
-            if (gameState.voiceEnabled) {
-                speakText(gameState.currentSpeechText);
-            }
+            if (gameState.voiceEnabled) speakText(gameState.currentSpeechText);
         }
 
         function speakText(text) {
             if (!synth) return;
-            synth.cancel(); // Parar lo anterior
-            
+            synth.cancel(); 
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.rate = 0.9; // Un pelín más lento para que vocalice bien
-
-            // Intentar buscar una voz de Google en español (suelen ser las mejores en Chrome)
+            utterance.rate = 0.9;
             const voices = synth.getVoices();
-            // Prioridad: Google Español -> Cualquier 'es-ES' -> Cualquier 'es'
-            const preferredVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('es')) 
-                                || voices.find(v => v.lang === 'es-ES')
-                                || voices.find(v => v.lang.includes('es'));
-
-            if (preferredVoice) {
-                utterance.voice = preferredVoice;
-                utterance.lang = preferredVoice.lang;
-            } else {
-                 utterance.lang = 'es-ES'; // Fallback
-            }
-
-            // Icon animation trigger
+            const preferredVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('es')) || voices.find(v => v.lang === 'es-ES') || voices.find(v => v.lang.includes('es'));
+            if (preferredVoice) utterance.voice = preferredVoice;
+            
             const icon = document.getElementById('speaker-icon');
             utterance.onstart = () => icon.classList.add('speaking');
             utterance.onend = () => icon.classList.remove('speaking');
-
             synth.speak(utterance);
         }
 
-        function repeatAudio() {
-            if (gameState.currentSpeechText) {
-                speakText(gameState.currentSpeechText);
-            }
-        }
+        function repeatAudio() { if (gameState.currentSpeechText) speakText(gameState.currentSpeechText); }
 
         function addToHistory(verb) {
             const list = document.getElementById('history-list');
@@ -686,21 +673,53 @@
             list.prepend(li);
         }
 
+        // --- VERIFICACIÓN DEL CARTÓN (LOGICA PROFESOR) ---
+        function verifyBingoModal() {
+            const id = prompt("Introduce el ID del cartón del alumno para verificar:");
+            if (!id) return;
+
+            const seed = parseInt(id);
+            if (isNaN(seed)) { alert("ID inválido."); return; }
+
+            // Reconstruir cartón
+            // IMPORTANTE: Usa la lista 'gameState.filtered' que son TODOS los verbos posibles de la partida
+            // Pero cuidado: el alumno usó 'gameState.filtered' cuando entró. Asumimos que los filtros son los mismos.
+            // Para ser exactos, barajamos gameState.filtered (copia completa inicial) con la seed.
+            
+            // NOTA: Como 'gameState.filtered' se modifica? No, 'gameState.available' se vacía, 'filtered' es const.
+            const fullList = [...gameState.filtered]; 
+            const reconstructedShuffled = shuffleWithSeed(fullList, seed);
+            const studentCardVerbs = reconstructedShuffled.slice(0, 12); // Primeros 12
+
+            // Comprobar
+            const missing = studentCardVerbs.filter(v => !gameState.drawnHistory.includes(v.id));
+
+            if (missing.length === 0) {
+                alert(`¡BINGO CORRECTO!\nEl cartón ${id} tiene todos los verbos tachados.`);
+            } else {
+                const missingNames = missing.map(v => v.conjugation).join(", ");
+                alert(`¡BINGO INCORRECTO!\nFaltan por salir: ${missingNames}`);
+            }
+        }
+
         // --- ALUMNO (CARTÓN) ---
         function generateStudentCard() {
             const grid = document.getElementById('bingo-grid');
             grid.innerHTML = "";
-            document.getElementById('card-id').innerText = Math.floor(Math.random()*9000)+1000;
+            
+            // Generar ID y usarlo como semilla
+            const seed = Math.floor(Math.random() * 9000) + 1000;
+            document.getElementById('card-id').innerText = seed;
 
-            const shuffled = [...gameState.filtered].sort(() => 0.5 - Math.random());
-            const items = shuffled.slice(0, 12);
+            // Barajar usando Seed
+            const fullList = [...gameState.filtered];
+            const items = shuffleWithSeed(fullList, seed).slice(0, 12);
 
             items.forEach(verb => {
                 const cell = document.createElement('div');
                 cell.className = "bingo-cell rounded flex items-center justify-center p-1 h-20 md:h-24 text-center select-none";
 
                 let text = "", subtext = "";
-                
                 if (gameState.mode === 'analyst') {
                     text = `<span class="font-bold text-slate-700 text-sm md:text-base leading-tight">${verb.conjugation}</span>`;
                 } else {
@@ -715,15 +734,28 @@
                         ${subtext}
                     </div>
                 `;
-                cell.onclick = () => cell.classList.toggle('marked');
+                cell.onclick = () => {
+                    cell.classList.toggle('marked');
+                    checkAutoBingo(); // Chequear cada vez que marca
+                };
                 grid.appendChild(cell);
             });
         }
 
-        // --- CONFETI ---
-        function checkBingo() {
-            startConfetti();
-            setTimeout(() => alert("¡BINGO! Comprobemos..."), 500);
+        // --- CONFETI AUTOMÁTICO ---
+        function checkAutoBingo() {
+            const markedCount = document.querySelectorAll('.bingo-cell.marked').length;
+            if (markedCount === 12) {
+                startConfetti();
+                // Reproducir sonido ganador (opcional)
+                const winSynth = window.speechSynthesis;
+                if(winSynth) {
+                    const u = new SpeechSynthesisUtterance("¡Bingo! ¡Felicidades!");
+                    u.lang = "es-ES";
+                    winSynth.speak(u);
+                }
+                setTimeout(() => alert("¡¡BINGO!!\nLevanta la mano y dicta tu ID al profesor."), 300);
+            }
         }
 
         // Canvas Confetti
