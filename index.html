@@ -295,25 +295,33 @@
     <!-- LOGICA -->
     <script>
         // ============================================
-        // 1. GENERACIÓN DE DATOS ESTRUCTURADOS
+        // 1. GENERACIÓN DE DATOS ESTRUCTURADOS (AMPLIADO)
         // ============================================
         
         // Estructura Raw: [Verbo, Conjugación, Persona, Número, Tiempo, Modo, Tipo]
         const rawData = [
-            // --- INDICATIVO SIMPLE ---
+            // --- INDICATIVO SIMPLE (Más variedad de personas y verbos) ---
             ["Comer", "Yo como", "1ª", "Singular", "Presente", "Indicativo", "simple"],
             ["Vivir", "Tú vives", "2ª", "Singular", "Presente", "Indicativo", "simple"],
-            ["Cantar", "Él canta", "3ª", "Singular", "Presente", "Indicativo", "simple"],
+            ["Cantar", "Ella canta", "3ª", "Singular", "Presente", "Indicativo", "simple"],
             ["Beber", "Nosotros bebemos", "1ª", "Plural", "Presente", "Indicativo", "simple"],
             ["Escribir", "Vosotros escribís", "2ª", "Plural", "Presente", "Indicativo", "simple"],
-            ["Correr", "Ellos corren", "3ª", "Plural", "Presente", "Indicativo", "simple"],
+            ["Correr", "Ellas corren", "3ª", "Plural", "Presente", "Indicativo", "simple"],
+            ["Bailar", "Usted baila", "3ª", "Singular", "Presente", "Indicativo", "simple"],
+            ["Leer", "Yo leo", "1ª", "Singular", "Presente", "Indicativo", "simple"],
+            ["Abrir", "Tú abres", "2ª", "Singular", "Presente", "Indicativo", "simple"],
+            ["Comprender", "Nosotros comprendemos", "1ª", "Plural", "Presente", "Indicativo", "simple"],
             
             ["Saltar", "Yo salté", "1ª", "Singular", "Pret. Perf. Simple", "Indicativo", "simple"],
             ["Comer", "Tú comiste", "2ª", "Singular", "Pret. Perf. Simple", "Indicativo", "simple"],
             ["Salir", "Él salió", "3ª", "Singular", "Pret. Perf. Simple", "Indicativo", "simple"],
             ["Ver", "Nosotros vimos", "1ª", "Plural", "Pret. Perf. Simple", "Indicativo", "simple"],
-            ["Dar", "Vosotros disteis", "2ª", "Plural", "Pret. Perf. Simple", "Indicativo", "simple"],
+            ["Dar", "Vosotras disteis", "2ª", "Plural", "Pret. Perf. Simple", "Indicativo", "simple"],
             ["Ir", "Ellos fueron", "3ª", "Plural", "Pret. Perf. Simple", "Indicativo", "simple"],
+            ["Andar", "Yo anduve", "1ª", "Singular", "Pret. Perf. Simple", "Indicativo", "simple"],
+            ["Traer", "Tú trajiste", "2ª", "Singular", "Pret. Perf. Simple", "Indicativo", "simple"],
+            ["Conducir", "Ella condujo", "3ª", "Singular", "Pret. Perf. Simple", "Indicativo", "simple"],
+            ["Poder", "Nosotros pudimos", "1ª", "Plural", "Pret. Perf. Simple", "Indicativo", "simple"],
 
             ["Estar", "Yo estaba", "1ª", "Singular", "Pret. Imperfecto", "Indicativo", "simple"],
             ["Tener", "Tú tenías", "2ª", "Singular", "Pret. Imperfecto", "Indicativo", "simple"],
@@ -321,6 +329,10 @@
             ["Jugar", "Nosotros jugábamos", "1ª", "Plural", "Pret. Imperfecto", "Indicativo", "simple"],
             ["Leer", "Vosotros leíais", "2ª", "Plural", "Pret. Imperfecto", "Indicativo", "simple"],
             ["Decir", "Ellos decían", "3ª", "Plural", "Pret. Imperfecto", "Indicativo", "simple"],
+            ["Soler", "Yo solía", "1ª", "Singular", "Pret. Imperfecto", "Indicativo", "simple"],
+            ["Ver", "Tú veías", "2ª", "Singular", "Pret. Imperfecto", "Indicativo", "simple"],
+            ["Ir", "Él iba", "3ª", "Singular", "Pret. Imperfecto", "Indicativo", "simple"],
+            ["Ser", "Nosotros éramos", "1ª", "Plural", "Pret. Imperfecto", "Indicativo", "simple"],
 
             ["Amar", "Yo amaré", "1ª", "Singular", "Futuro Simple", "Indicativo", "simple"],
             ["Saber", "Tú sabrás", "2ª", "Singular", "Futuro Simple", "Indicativo", "simple"],
@@ -328,6 +340,10 @@
             ["Venir", "Nosotros vendremos", "1ª", "Plural", "Futuro Simple", "Indicativo", "simple"],
             ["Tener", "Vosotros tendréis", "2ª", "Plural", "Futuro Simple", "Indicativo", "simple"],
             ["Hacer", "Ellos harán", "3ª", "Plural", "Futuro Simple", "Indicativo", "simple"],
+            ["Valer", "Esto valdrá", "3ª", "Singular", "Futuro Simple", "Indicativo", "simple"],
+            ["Salir", "Yo saldré", "1ª", "Singular", "Futuro Simple", "Indicativo", "simple"],
+            ["Decir", "Tú dirás", "2ª", "Singular", "Futuro Simple", "Indicativo", "simple"],
+            ["Querer", "Nosotros querremos", "1ª", "Plural", "Futuro Simple", "Indicativo", "simple"],
 
             ["Ser", "Yo sería", "1ª", "Singular", "Condicional Simple", "Indicativo", "simple"],
             ["Ir", "Tú irías", "2ª", "Singular", "Condicional Simple", "Indicativo", "simple"],
@@ -335,39 +351,61 @@
             ["Dar", "Nosotros daríamos", "1ª", "Plural", "Condicional Simple", "Indicativo", "simple"],
             ["Saber", "Vosotros sabríais", "2ª", "Plural", "Condicional Simple", "Indicativo", "simple"],
             ["Poder", "Ellos podrían", "3ª", "Plural", "Condicional Simple", "Indicativo", "simple"],
+            ["Caber", "Yo cabría", "1ª", "Singular", "Condicional Simple", "Indicativo", "simple"],
+            ["Haber", "Habría", "3ª", "Singular", "Condicional Simple", "Indicativo", "simple"],
+            ["Poner", "Tú pondrías", "2ª", "Singular", "Condicional Simple", "Indicativo", "simple"],
+            ["Tener", "Nosotros tendríamos", "1ª", "Plural", "Condicional Simple", "Indicativo", "simple"],
 
-            // --- INDICATIVO COMPUESTO ---
+            // --- INDICATIVO COMPUESTO (Más variedad) ---
             ["Hablar", "Yo he hablado", "1ª", "Singular", "Pret. Perf. Compuesto", "Indicativo", "compound"],
             ["Estudiar", "Tú has estudiado", "2ª", "Singular", "Pret. Perf. Compuesto", "Indicativo", "compound"],
             ["Abrir", "Él ha abierto", "3ª", "Singular", "Pret. Perf. Compuesto", "Indicativo", "compound"],
             ["Romper", "Nosotros hemos roto", "1ª", "Plural", "Pret. Perf. Compuesto", "Indicativo", "compound"],
-            ["Ver", "Ellos han visto", "3ª", "Plural", "Pret. Perf. Compuesto", "Indicativo", "compound"],
+            ["Ver", "Ellas han visto", "3ª", "Plural", "Pret. Perf. Compuesto", "Indicativo", "compound"],
+            ["Poner", "Yo he puesto", "1ª", "Singular", "Pret. Perf. Compuesto", "Indicativo", "compound"],
+            ["Escribir", "Tú has escrito", "2ª", "Singular", "Pret. Perf. Compuesto", "Indicativo", "compound"],
+            ["Volver", "Ella ha vuelto", "3ª", "Singular", "Pret. Perf. Compuesto", "Indicativo", "compound"],
+            ["Decir", "Nosotros hemos dicho", "1ª", "Plural", "Pret. Perf. Compuesto", "Indicativo", "compound"],
+            ["Hacer", "Vosotros habéis hecho", "2ª", "Plural", "Pret. Perf. Compuesto", "Indicativo", "compound"],
             
             ["Vivir", "Yo había vivido", "1ª", "Singular", "Pret. Pluscuamperf.", "Indicativo", "compound"],
             ["Llegar", "Tú habías llegado", "2ª", "Singular", "Pret. Pluscuamperf.", "Indicativo", "compound"],
             ["Salir", "Él había salido", "3ª", "Singular", "Pret. Pluscuamperf.", "Indicativo", "compound"],
             ["Acabar", "Nosotros habíamos acabado", "1ª", "Plural", "Pret. Pluscuamperf.", "Indicativo", "compound"],
             ["Caer", "Ellos habían caído", "3ª", "Plural", "Pret. Pluscuamperf.", "Indicativo", "compound"],
+            ["Descubrir", "Yo había descubierto", "1ª", "Singular", "Pret. Pluscuamperf.", "Indicativo", "compound"],
+            ["Morir", "Tú habías muerto", "2ª", "Singular", "Pret. Pluscuamperf.", "Indicativo", "compound"],
+            ["Resolver", "Ella había resuelto", "3ª", "Singular", "Pret. Pluscuamperf.", "Indicativo", "compound"],
             
             ["Ganar", "Yo habré ganado", "1ª", "Singular", "Futuro Compuesto", "Indicativo", "compound"],
             ["Perder", "Tú habrás perdido", "2ª", "Singular", "Futuro Compuesto", "Indicativo", "compound"],
             ["Elegir", "Él habrá elegido", "3ª", "Singular", "Futuro Compuesto", "Indicativo", "compound"],
             ["Andar", "Nosotros habremos andado", "1ª", "Plural", "Futuro Compuesto", "Indicativo", "compound"],
             ["Dormir", "Ellos habrán dormido", "3ª", "Plural", "Futuro Compuesto", "Indicativo", "compound"],
+            ["Terminar", "Yo habré terminado", "1ª", "Singular", "Futuro Compuesto", "Indicativo", "compound"],
+            ["Volver", "Tú habrás vuelto", "2ª", "Singular", "Futuro Compuesto", "Indicativo", "compound"],
             
             ["Estar", "Yo habría estado", "1ª", "Singular", "Condic. Compuesto", "Indicativo", "compound"],
             ["Ser", "Tú habrías sido", "2ª", "Singular", "Condic. Compuesto", "Indicativo", "compound"],
             ["Ir", "Él habría ido", "3ª", "Singular", "Condic. Compuesto", "Indicativo", "compound"],
             ["Tener", "Nosotros habríamos tenido", "1ª", "Plural", "Condic. Compuesto", "Indicativo", "compound"],
             ["Hacer", "Ellos habrían hecho", "3ª", "Plural", "Condic. Compuesto", "Indicativo", "compound"],
+            ["Romper", "Yo habría roto", "1ª", "Singular", "Condic. Compuesto", "Indicativo", "compound"],
+            ["Abrir", "Tú habrías abierto", "2ª", "Singular", "Condic. Compuesto", "Indicativo", "compound"],
 
-            // --- SUBJUNTIVO SIMPLE ---
+            // --- SUBJUNTIVO SIMPLE (Más verbos irregulares) ---
             ["Cantar", "Yo cante", "1ª", "Singular", "Presente", "Subjuntivo", "simple"],
             ["Beber", "Tú bebas", "2ª", "Singular", "Presente", "Subjuntivo", "simple"],
             ["Vivir", "Él viva", "3ª", "Singular", "Presente", "Subjuntivo", "simple"],
             ["Tener", "Nosotros tengamos", "1ª", "Plural", "Presente", "Subjuntivo", "simple"],
             ["Salir", "Vosotros salgáis", "2ª", "Plural", "Presente", "Subjuntivo", "simple"],
             ["Poner", "Ellos pongan", "3ª", "Plural", "Presente", "Subjuntivo", "simple"],
+            ["Conducir", "Yo conduzca", "1ª", "Singular", "Presente", "Subjuntivo", "simple"],
+            ["Conocer", "Tú conozcas", "2ª", "Singular", "Presente", "Subjuntivo", "simple"],
+            ["Haber", "Haya", "3ª", "Singular", "Presente", "Subjuntivo", "simple"],
+            ["Saber", "Nosotros sepamos", "1ª", "Plural", "Presente", "Subjuntivo", "simple"],
+            ["Ir", "Vosotros vayáis", "2ª", "Plural", "Presente", "Subjuntivo", "simple"],
+            ["Dar", "Ellas den", "3ª", "Plural", "Presente", "Subjuntivo", "simple"],
 
             ["Hablar", "Yo hablara", "1ª", "Singular", "Pret. Imperfecto", "Subjuntivo", "simple"],
             ["Comer", "Tú comieras", "2ª", "Singular", "Pret. Imperfecto", "Subjuntivo", "simple"],
@@ -375,6 +413,10 @@
             ["Ir", "Nosotros fuéramos", "1ª", "Plural", "Pret. Imperfecto", "Subjuntivo", "simple"],
             ["Hacer", "Vosotros hicierais", "2ª", "Plural", "Pret. Imperfecto", "Subjuntivo", "simple"],
             ["Decir", "Ellos dijeran", "3ª", "Plural", "Pret. Imperfecto", "Subjuntivo", "simple"],
+            ["Poder", "Yo pudiera", "1ª", "Singular", "Pret. Imperfecto", "Subjuntivo", "simple"],
+            ["Querer", "Tú quisieras", "2ª", "Singular", "Pret. Imperfecto", "Subjuntivo", "simple"],
+            ["Tener", "Ella tuviera", "3ª", "Singular", "Pret. Imperfecto", "Subjuntivo", "simple"],
+            ["Venir", "Nosotros viniéramos", "1ª", "Plural", "Pret. Imperfecto", "Subjuntivo", "simple"],
 
             ["Estar", "Yo estuviese", "1ª", "Singular", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
             ["Ser", "Tú fueses", "2ª", "Singular", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
@@ -382,6 +424,9 @@
             ["Ver", "Nosotros viésemos", "1ª", "Plural", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
             ["Oír", "Vosotros oyeseis", "2ª", "Plural", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
             ["Traer", "Ellos trajesen", "3ª", "Plural", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
+            ["Pedir", "Yo pidiese", "1ª", "Singular", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
+            ["Sentir", "Tú sintieses", "2ª", "Singular", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
+            ["Dormir", "Ella durmiese", "3ª", "Singular", "Pret. Imperfecto (B)", "Subjuntivo", "simple"],
 
             // --- SUBJUNTIVO COMPUESTO ---
             ["Acabar", "Yo haya acabado", "1ª", "Singular", "Pret. Perf. Compuesto", "Subjuntivo", "compound"],
@@ -389,12 +434,16 @@
             ["Volver", "Él haya vuelto", "3ª", "Singular", "Pret. Perf. Compuesto", "Subjuntivo", "compound"],
             ["Ver", "Nosotros hayamos visto", "1ª", "Plural", "Pret. Perf. Compuesto", "Subjuntivo", "compound"],
             ["Abrir", "Ellos hayan abierto", "3ª", "Plural", "Pret. Perf. Compuesto", "Subjuntivo", "compound"],
+            ["Romper", "Yo haya roto", "1ª", "Singular", "Pret. Perf. Compuesto", "Subjuntivo", "compound"],
+            ["Escribir", "Tú hayas escrito", "2ª", "Singular", "Pret. Perf. Compuesto", "Subjuntivo", "compound"],
 
             ["Llamar", "Yo hubiera llamado", "1ª", "Singular", "Pret. Pluscuamperf.", "Subjuntivo", "compound"],
             ["Sentir", "Tú hubieras sentido", "2ª", "Singular", "Pret. Pluscuamperf.", "Subjuntivo", "compound"],
             ["Pedir", "Él hubiera pedido", "3ª", "Singular", "Pret. Pluscuamperf.", "Subjuntivo", "compound"],
             ["Dormir", "Nosotros hubiéramos dormido", "1ª", "Plural", "Pret. Pluscuamperf.", "Subjuntivo", "compound"],
-            ["Morir", "Ellos hubieran muerto", "3ª", "Plural", "Pret. Pluscuamperf.", "Subjuntivo", "compound"]
+            ["Morir", "Ellos hubieran muerto", "3ª", "Plural", "Pret. Pluscuamperf.", "Subjuntivo", "compound"],
+            ["Hacer", "Yo hubiera hecho", "1ª", "Singular", "Pret. Pluscuamperf.", "Subjuntivo", "compound"],
+            ["Decir", "Tú hubieras dicho", "2ª", "Singular", "Pret. Pluscuamperf.", "Subjuntivo", "compound"]
         ];
 
         const verbDatabase = rawData.map((d, i) => ({
