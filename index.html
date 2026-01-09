@@ -554,7 +554,16 @@
                 // Preparar Audio (Texto natural)
                 // Convertir "1ª" -> "Primera", "3ª" -> "Tercera"
                 const personFull = verb.person.replace("1ª", "Primera").replace("2ª", "Segunda").replace("3ª", "Tercera");
-                gameState.currentSpeechText = `${personFull} Persona del ${verb.number}. ${verb.tense} de ${verb.mood}.`;
+                
+                // Expandir abreviaturas para la voz
+                let tenseFull = verb.tense
+                    .replace("Pret.", "Pretérito")
+                    .replace("Perf.", "Perfecto")
+                    .replace("Pluscuamperf.", "Pluscuamperfecto")
+                    .replace("Condic.", "Condicional")
+                    .replace("(B)", "");
+
+                gameState.currentSpeechText = `${personFull} Persona del ${verb.number}. ${tenseFull} de ${verb.mood}.`;
 
             } else {
                 // Visual
