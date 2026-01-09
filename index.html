@@ -147,30 +147,24 @@
                         </div>
                     </div>
 
-                    <!-- Niveles de Dificultad (SIN CASILLAS) -->
+                    <!-- Niveles de Dificultad -->
                     <div class="mb-8">
                         <label class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3 block">2. Niveles de Dificultad</label>
                         
                         <!-- Botones de Nivel -->
-                        <div class="flex gap-3 mb-4">
-                            <button id="btn-lvl-1" onclick="setLevel(1)" class="btn-level btn-level-1 flex-1 py-3 rounded-xl border-2 text-sm font-bold transition transform active:scale-95 bg-white text-slate-600 border-slate-200 hover:border-green-300">
-                                NIVEL 1<br><span class="text-xs font-normal opacity-75">Básico</span>
+                        <div class="flex flex-col md:flex-row gap-3 mb-4">
+                            <button id="btn-lvl-1" onclick="setLevel(1)" class="btn-level btn-level-1 flex-1 py-4 px-2 rounded-xl border-2 text-sm font-bold transition transform active:scale-95 bg-white text-slate-600 border-slate-200 hover:border-green-300 flex flex-col items-center justify-center gap-1">
+                                <span class="text-lg">NIVEL 1</span>
+                                <span class="text-xs font-normal opacity-75 text-center leading-tight">Básico<br>(Ind. Simple)</span>
                             </button>
-                            <button id="btn-lvl-2" onclick="setLevel(2)" class="btn-level btn-level-2 flex-1 py-3 rounded-xl border-2 text-sm font-bold transition transform active:scale-95 bg-white text-slate-600 border-slate-200 hover:border-blue-300">
-                                NIVEL 2<br><span class="text-xs font-normal opacity-75">Medio</span>
+                            <button id="btn-lvl-2" onclick="setLevel(2)" class="btn-level btn-level-2 flex-1 py-4 px-2 rounded-xl border-2 text-sm font-bold transition transform active:scale-95 bg-white text-slate-600 border-slate-200 hover:border-blue-300 flex flex-col items-center justify-center gap-1">
+                                <span class="text-lg">NIVEL 2</span>
+                                <span class="text-xs font-normal opacity-75 text-center leading-tight">Medio<br>(+Compuestos)</span>
                             </button>
-                            <button id="btn-lvl-3" onclick="setLevel(3)" class="btn-level btn-level-3 flex-1 py-3 rounded-xl border-2 text-sm font-bold transition transform active:scale-95 bg-white text-slate-600 border-slate-200 hover:border-purple-300">
-                                NIVEL 3<br><span class="text-xs font-normal opacity-75">Experto</span>
+                            <button id="btn-lvl-3" onclick="setLevel(3)" class="btn-level btn-level-3 flex-1 py-4 px-2 rounded-xl border-2 text-sm font-bold transition transform active:scale-95 bg-white text-slate-600 border-slate-200 hover:border-purple-300 flex flex-col items-center justify-center gap-1">
+                                <span class="text-lg">NIVEL 3</span>
+                                <span class="text-xs font-normal opacity-75 text-center leading-tight">Experto<br>(Todo)</span>
                             </button>
-                        </div>
-
-                        <!-- Leyenda -->
-                        <div id="level-legend" class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm text-slate-600 flex items-start gap-3">
-                            <i class="ph ph-info text-xl text-indigo-500 mt-0.5"></i>
-                            <div>
-                                <span class="font-bold block text-slate-800 mb-1">Contenido Incluido:</span>
-                                <span id="legend-text">Selecciona un nivel para ver el contenido.</span>
-                            </div>
                         </div>
 
                         <p id="error-msg" class="text-rose-500 text-sm mt-3 hidden font-bold flex items-center gap-2">
@@ -443,16 +437,6 @@
             // Visual Updates
             document.querySelectorAll('.btn-level').forEach(b => b.classList.remove('active'));
             document.getElementById(`btn-lvl-${level}`).classList.add('active');
-            
-            // Legend Text Update
-            const legend = document.getElementById('legend-text');
-            if(level === 1) {
-                legend.innerText = "Solo tiempos simples del MODO INDICATIVO (Presente, Pretéritos, Futuro, Condicional).";
-            } else if(level === 2) {
-                legend.innerText = "MODO INDICATIVO completo (Tiempos Simples y Compuestos).";
-            } else if(level === 3) {
-                legend.innerText = "TODO EL CONTENIDO: Indicativo y Subjuntivo (Simples y Compuestos).";
-            }
         }
 
         function startGame(role) {
