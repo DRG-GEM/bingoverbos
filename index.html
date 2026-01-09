@@ -710,6 +710,7 @@
             
             if (missing.length === 0) {
                 // VERDE (Correcto)
+                startConfetti(); // Añadir confeti también aquí
                 content.className = "bg-emerald-500 text-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform transition-all scale-100 border-4 border-emerald-400 ring-4 ring-black/10";
                 icon.innerHTML = '<i class="ph ph-trophy-fill"></i>';
                 title.innerText = "¡BINGO CORRECTO!";
@@ -776,7 +777,10 @@
                     u.lang = "es-ES";
                     winSynth.speak(u);
                 }
-                // No alert, just visual confetti + sound
+                // Añadir mensaje de alerta para el alumno
+                setTimeout(() => {
+                    alert("¡BINGO!\n\nLevanta la mano y dicta tu ID al profesor para comprobarlo.");
+                }, 500);
             }
         }
 
