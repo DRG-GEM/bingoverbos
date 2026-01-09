@@ -75,6 +75,12 @@
         /* Icono de voz hablando */
         .speaking { animation: pulse-voice 1s infinite; color: #4f46e5; }
         @keyframes pulse-voice { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        
+        /* Estilos botón nivel activo */
+        .btn-level.active { ring-width: 2px; ring-offset-width: 2px; transform: scale(1.02); }
+        .btn-level-1.active { background-color: #dcfce7; color: #166534; border-color: #166534; ring-color: #166534; }
+        .btn-level-2.active { background-color: #dbeafe; color: #1e40af; border-color: #1e40af; ring-color: #1e40af; }
+        .btn-level-3.active { background-color: #f3e8ff; color: #6b21a8; border-color: #6b21a8; ring-color: #6b21a8; }
     </style>
 </head>
 <body class="min-h-screen text-slate-800 flex flex-col">
@@ -141,46 +147,34 @@
                         </div>
                     </div>
 
-                    <!-- Filtros (Ahora explícitos como Niveles de Dificultad) -->
+                    <!-- Niveles de Dificultad (SIN CASILLAS) -->
                     <div class="mb-8">
                         <label class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3 block">2. Niveles de Dificultad</label>
                         
-                        <!-- Botones de Nivel Rápido -->
-                        <div class="flex gap-2 mb-4">
-                            <button onclick="setLevel(1)" class="flex-1 bg-green-100 text-green-800 py-2 rounded-lg text-xs font-bold hover:bg-green-200 border border-green-200 transition">
-                                NIVEL 1<br><span class="font-normal opacity-75">Básico (Ind. Simple)</span>
+                        <!-- Botones de Nivel -->
+                        <div class="flex gap-3 mb-4">
+                            <button id="btn-lvl-1" onclick="setLevel(1)" class="btn-level btn-level-1 flex-1 py-3 rounded-xl border-2 text-sm font-bold transition transform active:scale-95 bg-white text-slate-600 border-slate-200 hover:border-green-300">
+                                NIVEL 1<br><span class="text-xs font-normal opacity-75">Básico</span>
                             </button>
-                            <button onclick="setLevel(2)" class="flex-1 bg-blue-100 text-blue-800 py-2 rounded-lg text-xs font-bold hover:bg-blue-200 border border-blue-200 transition">
-                                NIVEL 2<br><span class="font-normal opacity-75">Medio (+Compuestos)</span>
+                            <button id="btn-lvl-2" onclick="setLevel(2)" class="btn-level btn-level-2 flex-1 py-3 rounded-xl border-2 text-sm font-bold transition transform active:scale-95 bg-white text-slate-600 border-slate-200 hover:border-blue-300">
+                                NIVEL 2<br><span class="text-xs font-normal opacity-75">Medio</span>
                             </button>
-                            <button onclick="setLevel(3)" class="flex-1 bg-purple-100 text-purple-800 py-2 rounded-lg text-xs font-bold hover:bg-purple-200 border border-purple-200 transition">
-                                NIVEL 3<br><span class="font-normal opacity-75">Experto (Todo)</span>
+                            <button id="btn-lvl-3" onclick="setLevel(3)" class="btn-level btn-level-3 flex-1 py-3 rounded-xl border-2 text-sm font-bold transition transform active:scale-95 bg-white text-slate-600 border-slate-200 hover:border-purple-300">
+                                NIVEL 3<br><span class="text-xs font-normal opacity-75">Experto</span>
                             </button>
                         </div>
 
-                        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
-                            <div class="grid grid-cols-2 gap-y-4 gap-x-8">
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" id="filter-indicative" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300" checked>
-                                    <span class="font-medium text-slate-700">Indicativo</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" id="filter-subjunctive" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300" checked>
-                                    <span class="font-medium text-slate-700">Subjuntivo</span>
-                                </label>
-                                <div class="h-px bg-slate-200 col-span-2 my-1"></div>
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" id="filter-simple" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300" checked>
-                                    <span class="font-medium text-slate-700">Tiempos Simples</span>
-                                </label>
-                                <label class="flex items-center gap-3 cursor-pointer">
-                                    <input type="checkbox" id="filter-compound" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300" checked>
-                                    <span class="font-medium text-slate-700">Tiempos Compuestos</span>
-                                </label>
+                        <!-- Leyenda -->
+                        <div id="level-legend" class="bg-slate-50 p-4 rounded-lg border border-slate-200 text-sm text-slate-600 flex items-start gap-3">
+                            <i class="ph ph-info text-xl text-indigo-500 mt-0.5"></i>
+                            <div>
+                                <span class="font-bold block text-slate-800 mb-1">Contenido Incluido:</span>
+                                <span id="legend-text">Selecciona un nivel para ver el contenido.</span>
                             </div>
                         </div>
+
                         <p id="error-msg" class="text-rose-500 text-sm mt-3 hidden font-bold flex items-center gap-2">
-                            <i class="ph ph-warning-circle text-lg"></i> Selección insuficiente (Mínimo 12 verbos).
+                            <i class="ph ph-warning-circle text-lg"></i> Error interno: No hay suficientes verbos.
                         </p>
                     </div>
 
@@ -426,6 +420,7 @@
         let gameState = {
             role: null,
             mode: 'analyst',
+            level: 1, // Default Level
             filtered: [],
             available: [],
             currentVerb: null,
@@ -435,43 +430,46 @@
 
         const synth = window.speechSynthesis;
 
+        // Init Default Level
+        window.onload = () => setLevel(1);
+
         // ============================================
         // 3. FUNCIONES DE JUEGO
         // ============================================
 
         function setLevel(level) {
-            const ind = document.getElementById('filter-indicative');
-            const sub = document.getElementById('filter-subjunctive');
-            const simple = document.getElementById('filter-simple');
-            const comp = document.getElementById('filter-compound');
-
-            if(level === 1) { // Básico
-                ind.checked = true; sub.checked = false;
-                simple.checked = true; comp.checked = false;
-            } else if(level === 2) { // Medio
-                ind.checked = true; sub.checked = false;
-                simple.checked = true; comp.checked = true;
-            } else if(level === 3) { // Experto
-                ind.checked = true; sub.checked = true;
-                simple.checked = true; comp.checked = true;
+            gameState.level = level;
+            
+            // Visual Updates
+            document.querySelectorAll('.btn-level').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-lvl-${level}`).classList.add('active');
+            
+            // Legend Text Update
+            const legend = document.getElementById('legend-text');
+            if(level === 1) {
+                legend.innerText = "Solo tiempos simples del MODO INDICATIVO (Presente, Pretéritos, Futuro, Condicional).";
+            } else if(level === 2) {
+                legend.innerText = "MODO INDICATIVO completo (Tiempos Simples y Compuestos).";
+            } else if(level === 3) {
+                legend.innerText = "TODO EL CONTENIDO: Indicativo y Subjuntivo (Simples y Compuestos).";
             }
         }
 
         function startGame(role) {
-            const ind = document.getElementById('filter-indicative').checked;
-            const sub = document.getElementById('filter-subjunctive').checked;
-            const simple = document.getElementById('filter-simple').checked;
-            const comp = document.getElementById('filter-compound').checked;
+            const level = gameState.level;
 
-            if((!ind && !sub) || (!simple && !comp)) {
-                alert("Selecciona al menos un modo y un tiempo.");
-                return;
-            }
-
+            // Logic without checkboxes
             const filtered = verbDatabase.filter(v => {
-                const modeOk = (ind && v.mood === 'Indicativo') || (sub && v.mood === 'Subjuntivo');
-                const typeOk = (simple && v.type === 'simple') || (comp && v.type === 'compound');
-                return modeOk && typeOk;
+                if (level === 1) {
+                    // Level 1: Indicative + Simple
+                    return v.mood === 'Indicativo' && v.type === 'simple';
+                } else if (level === 2) {
+                    // Level 2: Indicative (All)
+                    return v.mood === 'Indicativo';
+                } else {
+                    // Level 3: All (Indicative + Subjunctive)
+                    return true; 
+                }
             });
 
             if (filtered.length < 12) {
