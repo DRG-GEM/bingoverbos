@@ -81,6 +81,9 @@
         .btn-level-1.active { background-color: #dcfce7; color: #166534; border-color: #166534; ring-color: #166534; }
         .btn-level-2.active { background-color: #dbeafe; color: #1e40af; border-color: #1e40af; ring-color: #1e40af; }
         .btn-level-3.active { background-color: #f3e8ff; color: #6b21a8; border-color: #6b21a8; ring-color: #6b21a8; }
+
+        /* Modal Personalizado */
+        .modal-overlay { background-color: rgba(0,0,0,0.6); backdrop-filter: blur(2px); }
     </style>
 </head>
 <body class="min-h-screen text-slate-800 flex flex-col">
@@ -294,6 +297,22 @@
 
     </main>
 
+    <!-- VENTANA MODAL DE VERIFICACIÓN (NUEVO) -->
+    <div id="verify-modal" class="fixed inset-0 modal-overlay z-[60] hidden flex items-center justify-center px-4">
+        <div id="verify-content" class="rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform transition-all scale-100 border-4 border-white ring-4 ring-black/10">
+            <!-- Icono -->
+            <div id="verify-icon" class="text-7xl mb-4 flex justify-center"></div>
+            <!-- Título -->
+            <h3 id="verify-title" class="text-3xl font-black mb-3 uppercase tracking-tight"></h3>
+            <!-- Mensaje -->
+            <p id="verify-message" class="text-lg font-medium text-white/90 mb-8 leading-snug"></p>
+            <!-- Botón -->
+            <button onclick="closeVerifyModal()" class="bg-white hover:bg-gray-100 text-gray-800 font-bold text-lg py-3 px-8 rounded-full shadow-lg transition transform hover:-translate-y-1">
+                Entendido
+            </button>
+        </div>
+    </div>
+
     <!-- CONFETI -->
     <canvas id="confetti-canvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-50"></canvas>
 
@@ -311,7 +330,7 @@
             ["Beber", "Nosotros bebemos", "1ª", "Plural", "Presente", "Indicativo", "simple"],
             ["Escribir", "Vosotros escribís", "2ª", "Plural", "Presente", "Indicativo", "simple"],
             ["Correr", "Ellas corren", "3ª", "Plural", "Presente", "Indicativo", "simple"],
-            ["Bailar", "Usted baila", "3ª", "Singular", "Presente", "Indicativo", "simple"],
+            ["Bailar", "Él baila", "3ª", "Singular", "Presente", "Indicativo", "simple"],
             ["Leer", "Yo leo", "1ª", "Singular", "Presente", "Indicativo", "simple"],
             ["Abrir", "Tú abres", "2ª", "Singular", "Presente", "Indicativo", "simple"],
             ["Comprender", "Nosotros comprendemos", "1ª", "Plural", "Presente", "Indicativo", "simple"],
@@ -465,7 +484,6 @@
         window.onload = () => setLevel(1);
 
         // --- SEEDED RANDOM (VERIFICACIÓN) ---
-        // Generador aleatorio basado en semilla para reconstruir cartones
         function mulberry32(a) {
             return function() {
               var t = a += 0x6D2B79F5;
@@ -475,13 +493,10 @@
             }
         }
 
-        // Shuffle array using seed
         function shuffleWithSeed(array, seed) {
             const rng = mulberry32(seed);
             const m = array.length;
-            const t = array.slice(); // Copy
-            
-            // Fisher-Yates shuffle with seeded RNG
+            const t = array.slice(); 
             for (let i = m - 1; i > 0; i--) {
                 const j = Math.floor(rng() * (i + 1));
                 const temp = t[i];
@@ -551,7 +566,6 @@
             }
         }
 
-        // --- PROFESOR ---
         function updateRemaining() {
             document.getElementById('remaining-count').innerText = gameState.available.length;
         }
@@ -673,7 +687,7 @@
             list.prepend(li);
         }
 
-        // --- VERIFICACIÓN DEL CARTÓN (LOGICA PROFESOR) ---
+        // --- VERIFICACIÓN DEL CARTÓN CON MODAL (NUEVO) ---
         function verifyBingoModal() {
             const id = prompt("Introduce el ID del cartón del alumno para verificar:");
             if (!id) return;
@@ -681,25 +695,36 @@
             const seed = parseInt(id);
             if (isNaN(seed)) { alert("ID inválido."); return; }
 
-            // Reconstruir cartón
-            // IMPORTANTE: Usa la lista 'gameState.filtered' que son TODOS los verbos posibles de la partida
-            // Pero cuidado: el alumno usó 'gameState.filtered' cuando entró. Asumimos que los filtros son los mismos.
-            // Para ser exactos, barajamos gameState.filtered (copia completa inicial) con la seed.
-            
-            // NOTA: Como 'gameState.filtered' se modifica? No, 'gameState.available' se vacía, 'filtered' es const.
             const fullList = [...gameState.filtered]; 
             const reconstructedShuffled = shuffleWithSeed(fullList, seed);
-            const studentCardVerbs = reconstructedShuffled.slice(0, 12); // Primeros 12
+            const studentCardVerbs = reconstructedShuffled.slice(0, 12);
 
-            // Comprobar
             const missing = studentCardVerbs.filter(v => !gameState.drawnHistory.includes(v.id));
+            const modal = document.getElementById('verify-modal');
+            const content = document.getElementById('verify-content');
+            const icon = document.getElementById('verify-icon');
+            const title = document.getElementById('verify-title');
+            const msg = document.getElementById('verify-message');
 
+            modal.classList.remove('hidden');
+            
             if (missing.length === 0) {
-                alert(`¡BINGO CORRECTO!\nEl cartón ${id} tiene todos los verbos tachados.`);
+                // VERDE (Correcto)
+                content.className = "bg-emerald-500 text-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform transition-all scale-100 border-4 border-emerald-400 ring-4 ring-black/10";
+                icon.innerHTML = '<i class="ph ph-trophy-fill"></i>';
+                title.innerText = "¡BINGO CORRECTO!";
+                msg.innerText = `El cartón ${id} es totalmente válido. ¡Felicidades!`;
             } else {
-                const missingNames = missing.map(v => v.conjugation).join(", ");
-                alert(`¡BINGO INCORRECTO!\nFaltan por salir: ${missingNames}`);
+                // ROJO (Incorrecto - SIN PISTAS)
+                content.className = "bg-rose-600 text-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl transform transition-all scale-100 border-4 border-rose-500 ring-4 ring-black/10";
+                icon.innerHTML = '<i class="ph ph-warning-circle-fill"></i>';
+                title.innerText = "BINGO INCORRECTO";
+                msg.innerText = `El cartón ${id} aún no está completo. ¡Sigue jugando!`;
             }
+        }
+
+        function closeVerifyModal() {
+            document.getElementById('verify-modal').classList.add('hidden');
         }
 
         // --- ALUMNO (CARTÓN) ---
@@ -707,11 +732,9 @@
             const grid = document.getElementById('bingo-grid');
             grid.innerHTML = "";
             
-            // Generar ID y usarlo como semilla
             const seed = Math.floor(Math.random() * 9000) + 1000;
             document.getElementById('card-id').innerText = seed;
 
-            // Barajar usando Seed
             const fullList = [...gameState.filtered];
             const items = shuffleWithSeed(fullList, seed).slice(0, 12);
 
@@ -736,7 +759,7 @@
                 `;
                 cell.onclick = () => {
                     cell.classList.toggle('marked');
-                    checkAutoBingo(); // Chequear cada vez que marca
+                    checkAutoBingo(); 
                 };
                 grid.appendChild(cell);
             });
@@ -747,14 +770,13 @@
             const markedCount = document.querySelectorAll('.bingo-cell.marked').length;
             if (markedCount === 12) {
                 startConfetti();
-                // Reproducir sonido ganador (opcional)
                 const winSynth = window.speechSynthesis;
                 if(winSynth) {
                     const u = new SpeechSynthesisUtterance("¡Bingo! ¡Felicidades!");
                     u.lang = "es-ES";
                     winSynth.speak(u);
                 }
-                setTimeout(() => alert("¡¡BINGO!!\nLevanta la mano y dicta tu ID al profesor."), 300);
+                // No alert, just visual confetti + sound
             }
         }
 
