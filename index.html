@@ -584,8 +584,21 @@
             synth.cancel(); // Parar lo anterior
             
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'es-ES';
             utterance.rate = 0.9; // Un pelín más lento para que vocalice bien
+
+            // Intentar buscar una voz de Google en español (suelen ser las mejores en Chrome)
+            const voices = synth.getVoices();
+            // Prioridad: Google Español -> Cualquier 'es-ES' -> Cualquier 'es'
+            const preferredVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('es')) 
+                                || voices.find(v => v.lang === 'es-ES')
+                                || voices.find(v => v.lang.includes('es'));
+
+            if (preferredVoice) {
+                utterance.voice = preferredVoice;
+                utterance.lang = preferredVoice.lang;
+            } else {
+                 utterance.lang = 'es-ES'; // Fallback
+            }
 
             // Icon animation trigger
             const icon = document.getElementById('speaker-icon');
